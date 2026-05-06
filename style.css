@@ -1247,8 +1247,8 @@ body.is-intro.hdr-visible .hdr {
     }
 
     .ball-stage[data-state="form"] .ball {
-        --ball-size: 50vw;
-        --ball-y: 80vh;
+        --ball-size: 35vw;
+        --ball-y: 90vh;
     }
 
     .hdr {
