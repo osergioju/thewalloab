@@ -1203,6 +1203,10 @@ body.is-intro.hdr-visible .hdr {
         letter-spacing: 5px;
     }
 
+    .cta {
+        width: 198px;
+    }
+
     .display {
         font-size: clamp(29px, 5.6vw, 92px) !important;
     }
@@ -1212,7 +1216,7 @@ body.is-intro.hdr-visible .hdr {
     }
 
     .field label {
-        font-size: 16px;
+        font-size: 14px;
         margin-bottom: 0;
     }
 
@@ -1223,7 +1227,8 @@ body.is-intro.hdr-visible .hdr {
 
     .form__row {
         grid-template-columns: 1fr;
-        gap: 26px;
+        gap: 12px;
+        display: flex;
     }
 
     .hdr__brand svg {
