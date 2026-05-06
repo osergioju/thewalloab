@@ -529,7 +529,7 @@ body.is-intro.hdr-visible .hdr {
     font-size: 25px;
     letter-spacing: 1.35em;
     text-transform: uppercase;
-    margin-bottom: 26px;
+    margin-bottom: 24px;
 }
 
 .eyebrow span {
@@ -1198,6 +1198,29 @@ body.is-intro.hdr-visible .hdr {
    RESPONSIVE
    ===================================================================== */
 @media (max-width: 900px) {
+    .eyebrow {
+        font-size: 16px;
+        letter-spacing: 5px;
+    }
+
+    .display {
+        font-size: clamp(29px, 5.6vw, 92px) !important;
+    }
+
+    .title-form {
+        font-size: 20px;
+    }
+
+    .field label {
+        font-size: 16px;
+        margin-bottom: 0;
+    }
+
+    .field input {
+        padding: 6px 0;
+    }
+
+
     .form__row {
         grid-template-columns: 1fr;
         gap: 26px;
@@ -1234,7 +1257,7 @@ body.is-intro.hdr-visible .hdr {
     }
 
     .screen {
-        padding-top: 18vh;
+        padding-top: 10vh;
     }
 
     .board__pegs {
