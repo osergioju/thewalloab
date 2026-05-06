@@ -1251,7 +1251,7 @@ body.is-intro.hdr-visible .hdr {
         --ball-y: 90vh;
     }
 
-    span#status {
+    div#status {
         text-align: left !important;
     }
 
