@@ -1284,3 +1284,42 @@ body.is-intro.hdr-visible .hdr {
         transition-duration: .01ms !important;
     }
 }
+
+@media(min-width: 1024px) {
+    .ball-stage[data-state="form"] .ball {
+        transform: translate(30vw, var(--ball-y));
+    }
+}
+
+#game-root .flex {
+    display: flex;
+    max-width: 720px;
+    margin: 0 auto;
+    width: 20%;
+    flex-direction: column;
+}
+
+.flex-game-screen {
+    display: flex;
+    flex-flow: wrap;
+    padding-top: 20px;
+}
+
+.flex-canvas-screen {
+    width: 80%;
+}
+
+button#dropBtn {
+    margin-bottom: 10px;
+}
+
+.chances-text>div {
+    position: relative !important;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.chances-text>div * {
+    text-align: center;
+}

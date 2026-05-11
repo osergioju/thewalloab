@@ -226,7 +226,7 @@
 
     // Single state object — easier to reason about
     const state = {
-        chances: 4,
+        chances: 2,
         total: 0,
         history: [],
         ball: null,
@@ -493,6 +493,8 @@
     }
 
     function reset() {
+        window.location.reload();
+        /*
         if (state.rafId) { cancelAnimationFrame(state.rafId); state.rafId = null; }
         if (state.resetTimerId) { clearTimeout(state.resetTimerId); state.resetTimerId = null; }
         state.chances = 4;
@@ -507,7 +509,7 @@
         renderHistory();
         setStatus('COMEÇAR!', '#fff');
         refreshButton();
-        drawBoard();
+        drawBoard();*/
     }
 
     dropBtn.addEventListener('click', dropBall);

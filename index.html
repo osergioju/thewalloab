@@ -195,11 +195,6 @@
     <!-- ============= SCREEN 2 — CADASTRO ============= -->
     <section class="screen screen--form" id="screenForm" aria-hidden="true" aria-label="Cadastro">
       <div class="form-wrap">
-        <div class="eyebrow eyebrow--form" aria-hidden="true">
-          <span>T</span><span>H</span><span>E</span>
-          <span class="eyebrow__gap"></span>
-          <span>W</span><span>A</span><span>L</span><span>L</span>
-        </div>
         <div class="rule rule--top"><span></span></div>
         <h2 class="title-form">CADASTRE-SE PARA CONTINUAR</h2>
 
@@ -295,41 +290,49 @@
         -->
         <!-- Slot in your existing game here -->
         <div id="game-root" style="width: 100%; min-height: 720px;">
+          <div class="flex-game-screen">
 
-          <div
-            style="position:relative; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-            <div
-              style="text-align: right;color: #b0c4de;font-size: 20px;position: absolute;right: 0;font-family: 'Manrope';text-transform: uppercase;">
-              <div>Chances: <span id="chances" style="color: #fff; font-weight: 500; font-size: 16px;">4</span></div>
-              <div style="margin-top: 4px;">Total: <span id="total"
-                  style="color: #87ceeb; font-weight: 500; font-size: 16px;">0</span></div>
+            <div class="flex-canvas-screen">
+              <div style="position: relative; max-width: 720px; margin: 0 auto;">
+                <canvas id="board" width="700" height="480"
+                  style="width: 100%; height: auto; display: block; background: linear-gradient(180deg, rgba(20,40,80,0.6), rgba(40,70,120,0.4)); border: 1px solid rgba(135,206,235,0.3); border-radius: 12px;"></canvas>
+              </div>
+
+              <div id="slots"
+                style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; max-width: 720px; margin: 8px auto 0;">
+              </div>
+
+              <div id="history"
+                style="max-width: 720px; margin: 16px auto 0; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; min-height: 28px;">
+              </div>
             </div>
-          </div>
+            <div class="flex">
+              <div id="status"
+                style="text-align: center; color: #fff; font-size: 28px; font-weight: 300; letter-spacing: 2px; margin-bottom: 12px; min-height: 40px;">
+                COMEÇAR!
+              </div>
 
-          <div id="status"
-            style="text-align: center; color: #fff; font-size: 28px; font-weight: 300; letter-spacing: 2px; margin-bottom: 12px; min-height: 40px;">
-            COMEÇAR!</div>
 
+              <div style="text-align: center; margin-bottom: 8px;">
+                <button id="dropBtn"
+                  style="background: linear-gradient(180deg, #4a7fc7, #2c5a9c); color: #fff; border: 1px solid #6ba0e8; padding: 10px 32px; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; letter-spacing: 1px; box-shadow: 0 0 20px rgba(91,141,239,0.4);">SOLTAR
+                  BOLINHA</button>
+                <button id="resetBtn"
+                  style="background: transparent; color: #b0c4de; border: 1px solid #4a6f9c; padding: 10px 24px; border-radius: 8px; font-size: 14px; cursor: pointer; margin-left: 8px;">RECOMEÇAR</button>
+              </div>
 
-          <div style="text-align: center; margin-bottom: 8px;">
-            <button id="dropBtn"
-              style="background: linear-gradient(180deg, #4a7fc7, #2c5a9c); color: #fff; border: 1px solid #6ba0e8; padding: 10px 32px; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; letter-spacing: 1px; box-shadow: 0 0 20px rgba(91,141,239,0.4);">SOLTAR
-              BOLINHA</button>
-            <button id="resetBtn"
-              style="background: transparent; color: #b0c4de; border: 1px solid #4a6f9c; padding: 10px 24px; border-radius: 8px; font-size: 14px; cursor: pointer; margin-left: 8px;">RECOMEÇAR</button>
-          </div>
+              <div class="chances-text"
+                style="position:relative; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <div
+                  style="text-align: right;color: #b0c4de;font-size: 20px;position: absolute;right: 0;font-family: 'Manrope';text-transform: uppercase;">
+                  <div>Chances: <span id="chances" style="color: #fff; font-weight: 500; font-size: 16px;">4</span>
+                  </div>
+                  <div style="margin-top: 4px;">Total: <span id="total"
+                      style="color: #87ceeb; font-weight: 500; font-size: 16px;">0</span></div>
+                </div>
+              </div>
+            </div>
 
-          <div style="position: relative; max-width: 720px; margin: 0 auto;">
-            <canvas id="board" width="700" height="480"
-              style="width: 100%; height: auto; display: block; background: linear-gradient(180deg, rgba(20,40,80,0.6), rgba(40,70,120,0.4)); border: 1px solid rgba(135,206,235,0.3); border-radius: 12px;"></canvas>
-          </div>
-
-          <div id="slots"
-            style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; max-width: 720px; margin: 8px auto 0;">
-          </div>
-
-          <div id="history"
-            style="max-width: 720px; margin: 16px auto 0; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; min-height: 28px;">
           </div>
         </div>
       </div>
