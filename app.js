@@ -187,7 +187,7 @@
 
 
 (function () {
-    const SLOT_VALUES = [500, 150, 300, 50, 30, 25, 2000];
+    const SLOT_VALUES = [500, 150, 300, 50, 800, 25, 2000];
     const SLOT_COUNT = 7;
     const canvas = document.getElementById('board');
     const ctx = canvas.getContext('2d');
