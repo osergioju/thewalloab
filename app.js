@@ -98,6 +98,29 @@
 
     formEl?.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        const lead = {
+            nome: document.getElementById('nome').value,
+            nascimento: document.getElementById('nascimento').value,
+            telefone: document.getElementById('telefone').value,
+            email: document.getElementById('email').value,
+            advogado: document.getElementById('advogado').checked ? 'SIM' : 'NÃO',
+            oabprev: document.getElementById('oabprev').checked ? 'SIM' : 'NÃO',
+            data: new Date().toLocaleString()
+        };
+
+        const leads = JSON.parse(localStorage.getItem('leads')) || [];
+        leads.push(lead);
+
+        localStorage.setItem('leads', JSON.stringify(leads));
+
+        console.log('Lead salvo:', lead);
+
+        // 👉 AQUI você mantém o fluxo do seu jogo
+        // exemplo:
+        // window.location.href = "jogo.html";
+
+
         // Validate minimally — name + email/phone
         const nome = document.getElementById('nome')?.value.trim();
         const email = document.getElementById('email')?.value.trim();
@@ -186,6 +209,8 @@
 
 
 
+
+
 (function () {
     const SLOT_VALUES = [500, 150, 300, 50, 800, 25, 2000];
     const SLOT_COUNT = 7;
@@ -199,9 +224,9 @@
     const BALL_RADIUS = 9;
     const GRAVITY = 0.22;
     const BOUNCE = 0.55;
-    const FRICTION = 0.99;
-    const HORIZ_KICK = 1.4;
-    const MAX_FRAMES = 1200; // safety: max ~20s of falling
+    const FRICTION = 1.0;
+    const HORIZ_KICK = 3.0;
+    const MAX_FRAMES = 1200;
 
     const pegs = [];
     const topY = 50;
@@ -380,7 +405,10 @@
         state.frameCount++;
         const b = state.ball;
         b.vy += GRAVITY;
-        b.vx *= FRICTION;
+        const distFromCenter = b.x - W / 2;
+        b.vx += (distFromCenter === 0 ? (Math.random() < 0.5 ? -1 : 1) : Math.sign(distFromCenter)) * 0.02;
+
+        // b.vx *= FRICTION;
         b.x += b.vx;
         b.y += b.vy;
 
