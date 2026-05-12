@@ -209,8 +209,6 @@
 
 
 
-
-
 (function () {
     const SLOT_VALUES = [500, 150, 300, 50, 800, 25, 2000];
     const SLOT_COUNT = 7;
@@ -228,36 +226,17 @@
     const HORIZ_KICK = 3.0;
     const MAX_FRAMES = 1200;
 
-    // NOVO: quantas colunas extras adicionar em cada lado pra fechar o corredor lateral.
-    // Cada SIDE_EXTRA_COLS=1 adiciona 1 pino a mais por fileira de cada lado (mantendo o zig-zag).
-    const SIDE_EXTRA_COLS = 2;
-
-    const AIM_MIN_X = BALL_RADIUS + 4;
-    const AIM_MAX_X = W - BALL_RADIUS - 4;
-
     const pegs = [];
     const topY = 50;
     const rowGap = 42;
     const colGap = (W - PADDING_X * 2) / (PEG_COLS - 1);
-
-    // NOVO: gera fileiras com SIDE_EXTRA_COLS colunas a mais de cada lado.
-    // Mantém o mesmo zig-zag (fileira par sem offset, ímpar com colGap/2).
-    // O ponto-chave: as colunas extras seguem o MESMO espaçamento colGap, então
-    // o padrão hexagonal não quebra e não sobra corredor reto perto da parede.
     for (let r = 0; r < PEG_ROWS; r++) {
-        const isEven = r % 2 === 0;
-        const offset = isEven ? 0 : colGap / 2;
-        const baseCols = isEven ? PEG_COLS : PEG_COLS - 1;
-        const totalCols = baseCols + SIDE_EXTRA_COLS * 2;
-        // começa antes do PADDING_X original (à esquerda) e segue colGap normal
-        const startX = PADDING_X + offset - SIDE_EXTRA_COLS * colGap;
-        for (let c = 0; c < totalCols; c++) {
-            const x = startX + c * colGap;
+        const offset = (r % 2 === 0) ? 0 : colGap / 2;
+        const cols = (r % 2 === 0) ? PEG_COLS : PEG_COLS - 1;
+        for (let c = 0; c < cols; c++) {
+            const x = PADDING_X + offset + c * colGap;
             const y = topY + r * rowGap;
-            // mantém só pinos que cabem dentro do canvas
-            if (x > PEG_RADIUS + 2 && x < W - PEG_RADIUS - 2) {
-                pegs.push({ x, y });
-            }
+            if (x > 10 && x < W - 10) pegs.push({ x, y });
         }
     }
 
@@ -268,17 +247,17 @@
         dividers.push({ x: i * slotWidth, top: slotTopY, bottom: H });
     }
 
+    // Single state object — easier to reason about
     const state = {
         chances: 2,
         total: 0,
         history: [],
         ball: null,
-        phase: 'idle',
+        phase: 'idle', // 'idle' | 'falling' | 'celebrating' | 'gameover'
         highlightSlot: -1,
         rafId: null,
         resetTimerId: null,
-        frameCount: 0,
-        aimX: W / 2
+        frameCount: 0
     };
 
     const dropBtn = document.getElementById('dropBtn');
@@ -291,9 +270,9 @@
     }
 
     function refreshButton() {
+        // Single source of truth: button is enabled only when idle and chances remain
         const canDrop = state.phase === 'idle' && state.chances > 0;
         setButtonEnabled(canDrop);
-        canvas.style.cursor = canDrop ? 'crosshair' : 'default';
     }
 
     function renderSlots() {
@@ -340,37 +319,6 @@
         const el = document.getElementById('status');
         el.textContent = text;
         el.style.color = color || '#fff';
-    }
-
-    function drawAim() {
-        if (state.phase !== 'idle' || state.chances <= 0) return;
-        const x = state.aimX;
-
-        ctx.save();
-        ctx.setLineDash([6, 6]);
-        ctx.strokeStyle = 'rgba(135,206,235,0.45)';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(x, 36);
-        ctx.lineTo(x, topY - 6);
-        ctx.stroke();
-        ctx.restore();
-
-        ctx.beginPath();
-        ctx.arc(x, 24, BALL_RADIUS + 2, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(200,224,255,0.25)';
-        ctx.fill();
-        const bg = ctx.createRadialGradient(x - 3, 24 - 3, 0, x, 24, BALL_RADIUS);
-        bg.addColorStop(0, 'rgba(255,255,255,0.85)');
-        bg.addColorStop(0.4, 'rgba(216,232,248,0.7)');
-        bg.addColorStop(1, 'rgba(80,112,160,0.6)');
-        ctx.beginPath();
-        ctx.arc(x, 24, BALL_RADIUS, 0, Math.PI * 2);
-        ctx.fillStyle = bg;
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
     }
 
     function drawBoard() {
@@ -430,7 +378,19 @@
             ctx.lineWidth = 0.5;
             ctx.stroke();
         } else {
-            drawAim();
+            const bx = W / 2, by = 24;
+            ctx.beginPath();
+            ctx.arc(bx, by, BALL_RADIUS + 2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(200,224,255,0.25)';
+            ctx.fill();
+            const bg = ctx.createRadialGradient(bx - 3, by - 3, 0, bx, by, BALL_RADIUS);
+            bg.addColorStop(0, '#ffffff');
+            bg.addColorStop(0.4, '#d8e8f8');
+            bg.addColorStop(1, '#5070a0');
+            ctx.beginPath();
+            ctx.arc(bx, by, BALL_RADIUS, 0, Math.PI * 2);
+            ctx.fillStyle = bg;
+            ctx.fill();
         }
     }
 
@@ -446,6 +406,7 @@
         const distFromCenter = b.x - W / 2;
         b.vx += (distFromCenter === 0 ? (Math.random() < 0.5 ? -1 : 1) : Math.sign(distFromCenter)) * 0.02;
 
+        // b.vx *= FRICTION;
         b.x += b.vx;
         b.y += b.vy;
 
@@ -482,6 +443,7 @@
             });
         }
 
+        // Landing condition: bottom OR safety frame limit
         if (b.y > H - BALL_RADIUS || state.frameCount > MAX_FRAMES) {
             b.y = Math.min(b.y, H - BALL_RADIUS);
             const slotIdx = Math.max(0, Math.min(SLOT_COUNT - 1, Math.floor(b.x / slotWidth)));
@@ -494,6 +456,7 @@
     }
 
     function finishDrop(slotIdx) {
+        // Cancel animation cleanly
         if (state.rafId) {
             cancelAnimationFrame(state.rafId);
             state.rafId = null;
@@ -510,8 +473,9 @@
         renderHistory();
         updateHUD();
         setStatus('+' + value.toLocaleString('pt-BR') + ' PREVCOINS!', '#87ceeb');
-        refreshButton();
+        refreshButton(); // still disabled during celebration
 
+        // Clear any previous timer just in case
         if (state.resetTimerId) clearTimeout(state.resetTimerId);
         state.resetTimerId = setTimeout(() => {
             state.resetTimerId = null;
@@ -532,13 +496,14 @@
     }
 
     function dropBall() {
+        // Guard: only drop when idle with chances available
         if (state.phase !== 'idle' || state.chances <= 0) return;
 
         state.phase = 'falling';
         state.chances--;
         state.frameCount = 0;
         state.ball = {
-            x: state.aimX + (Math.random() - 0.5) * 2,
+            x: W / 2 + (Math.random() - 0.5) * 8,
             y: 24,
             vx: (Math.random() - 0.5) * 1.5,
             vy: 0
@@ -548,43 +513,30 @@
         setStatus('CAINDO...', '#c8e0ff');
         refreshButton();
 
+        // Cancel any stray frame before starting fresh
         if (state.rafId) cancelAnimationFrame(state.rafId);
         state.rafId = requestAnimationFrame(step);
     }
 
     function reset() {
         window.location.reload();
+        /*
+        if (state.rafId) { cancelAnimationFrame(state.rafId); state.rafId = null; }
+        if (state.resetTimerId) { clearTimeout(state.resetTimerId); state.resetTimerId = null; }
+        state.chances = 4;
+        state.total = 0;
+        state.history = [];
+        state.ball = null;
+        state.highlightSlot = -1;
+        state.phase = 'idle';
+        state.frameCount = 0;
+        updateHUD();
+        renderSlots();
+        renderHistory();
+        setStatus('COMEÇAR!', '#fff');
+        refreshButton();
+        drawBoard();*/
     }
-
-    function getCanvasX(evt) {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const x = (evt.clientX - rect.left) * scaleX;
-        return Math.max(AIM_MIN_X, Math.min(AIM_MAX_X, x));
-    }
-
-    canvas.addEventListener('mousemove', (e) => {
-        if (state.phase !== 'idle' || state.chances <= 0) return;
-        state.aimX = getCanvasX(e);
-        if (!state.ball) drawBoard();
-    });
-
-    canvas.addEventListener('click', (e) => {
-        if (state.phase !== 'idle' || state.chances <= 0) return;
-        state.aimX = getCanvasX(e);
-        dropBall();
-    });
-
-    canvas.addEventListener('touchmove', (e) => {
-        if (state.phase !== 'idle' || state.chances <= 0) return;
-        if (e.touches.length === 0) return;
-        e.preventDefault();
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const x = (e.touches[0].clientX - rect.left) * scaleX;
-        state.aimX = Math.max(AIM_MIN_X, Math.min(AIM_MAX_X, x));
-        if (!state.ball) drawBoard();
-    }, { passive: false });
 
     dropBtn.addEventListener('click', dropBall);
     resetBtn.addEventListener('click', reset);
